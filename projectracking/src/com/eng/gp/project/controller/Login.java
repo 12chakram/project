@@ -3,7 +3,10 @@ package com.eng.gp.project.controller;
 import java.io.IOException;
 
 import static com.jayway.restassured.RestAssured.given;
+
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -17,6 +20,7 @@ import com.eng.gp.project.domain.UserDetails;
 import com.eng.gp.project.services.ProjectTrackingService;
 import com.eng.gp.project.services.ProjectTrackingServiceBean;
 import com.eng.gp.project.util.JsonToObject;
+import com.gridpoint.energy.domainmodel.Channel;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -48,6 +52,7 @@ public class Login extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		String loginPath = "http://localhost:8080/publicApi/services/auth/login";
+		String channelPath = "http://localhost:8080/publicApi/services/user/getChannelsByPremisesIds";
 		String userName = request.getParameter("j_username");
 		String password = request.getParameter("j_password");
 		ProjectTrackingService  service = new ProjectTrackingServiceBean();
@@ -59,6 +64,13 @@ public class Login extends HttpServlet {
 			UserDetails userDetails = (UserDetails) jsonToObject.getStringToObject(responseJson, "userDetails", UserDetails.class);
 			if(userDetails.getUsername()!=null){
 				List<ProjectType> projectslist;
+				List<Long> premisesIds = new ArrayList<Long>();
+				premisesIds.add(Long.parseLong("12349"));
+				
+				Response restchannelResponse = given().queryParam("premisesIds",premisesIds).post(loginPath);
+				String channelresponseJson = restchannelResponse.asString();
+				System.out.println(channelresponseJson);
+				
 				projectslist = service.getAllProjectTypes();
 				request.setAttribute("allProjectstypes", projectslist);
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/project.jsp");
