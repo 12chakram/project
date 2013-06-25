@@ -50,16 +50,25 @@ public class Login extends HttpServlet {
 		String loginPath = "http://localhost:8080/publicApi/services/auth/login";
 		String userName = request.getParameter("j_username");
 		String password = request.getParameter("j_password");
+		ProjectTrackingService  service = new ProjectTrackingServiceBean();
 		
 			Response restResponse = given().queryParam("username", userName).queryParam("password", password).post(loginPath);
 
 			String responseJson = restResponse.asString();
 			System.out.println(responseJson);
 			UserDetails userDetails = (UserDetails) jsonToObject.getStringToObject(responseJson, "userDetails", UserDetails.class);
-		
-			System.out.println(userDetails.getUsername());
-			RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
-			requestDispatcher.forward(request, response);
+			if(userDetails.getUsername()!=null){
+				List<ProjectType> projectslist;
+				projectslist = service.getAllProjectTypes();
+				request.setAttribute("allProjectstypes", projectslist);
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/project.jsp");
+				requestDispatcher.forward(request, response);
+
+			}else {
+				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+				requestDispatcher.forward(request, response);
+			}
+			
 		}
 	
 	}
