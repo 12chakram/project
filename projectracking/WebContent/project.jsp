@@ -172,10 +172,14 @@ $("#datepicker" ).datepicker({
 				<td align="right" valign="top" width="50%">
 					<select name="attributes" property="attributes" multiple="true" size="4" style="width: 180px; height: 90px;"
 						onDblClick="moveSelectedOptions(this.form['attributes'],this.form['selectedAttributes'])">
-							<option value="mainload">Main:Main Load</option>
+							<c:forEach var="channel" items="${allChannels}">
+                   				<option value=${channel.channelId}>${channel.displayName}</option>
+                			</c:forEach>
+							
+						<!-- 	<option value="mainload">Main:Main Load</option>
 							<option value="hvac">HVAC:RTU1</option>
 							<option value="hvac">HVAC:RTU2</option>
-							<option value="lighting">Lighting:Sales Light</option>
+							<option value="lighting">Lighting:Sales Light</option> -->
 					</select>
 				</td>
 					<td align="center" valign="top" width="50px;"><br> 

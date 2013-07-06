@@ -17,7 +17,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.module.SimpleModule;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -28,6 +30,7 @@ import com.eng.gp.project.services.ProjectTrackingServiceBean;
 import com.eng.gp.project.util.DateFormats;
 import com.eng.gp.project.util.JsonToObject;
 import com.gridpoint.energy.domainmodel.Channel;
+import com.gridpoint.energy.publicapi.util.JacksonChannelDeserializer;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -93,7 +96,9 @@ public class Login extends HttpServlet {
 					JSONArray jsonArray = (JSONArray) jsonObject.get("result");
 					if (jsonArray.length() > 0) 
 					{
+						objectMapper.registerSubtypes(Map.class);
 						objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_LOCALDATETIME));
+						
 						channelList = new ArrayList<Channel>();
 						for (int iCount = 0; iCount < jsonArray.length(); iCount++) 
 						{
@@ -109,6 +114,9 @@ public class Login extends HttpServlet {
 				List<ProjectType> projectslist;
 				projectslist = service.getAllProjectTypes();
 				request.setAttribute("allProjectstypes", projectslist);
+				if(channelList!=null && !channelList.isEmpty()){
+				 request.setAttribute("allChannels", channelList);
+				}
 				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/project.jsp");
 				requestDispatcher.forward(request, response);
 

@@ -1,4 +1,4 @@
-package com.eng.gp.project.util.date;
+package com.gridpoint.energy.util.date;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,8 +9,9 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.builder.HashCodeBuilder;
 
-import com.eng.gp.project.util.DateFormats;
-import static com.eng.gp.project.util.date.TimeZones.UTC;
+import com.gridpoint.energy.util.DateFormats;
+
+import static com.gridpoint.energy.util.date.TimeZones.UTC;
 
 /**
  * Represents date and time on the wall. Similar to JodaTime's LocalDateTime class, but with optional behavior to

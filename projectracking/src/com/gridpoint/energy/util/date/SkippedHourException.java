@@ -1,4 +1,4 @@
-package com.eng.gp.project.util.date;
+package com.gridpoint.energy.util.date;
 
 public class SkippedHourException extends RuntimeException {
     private static final long serialVersionUID = 1L;
