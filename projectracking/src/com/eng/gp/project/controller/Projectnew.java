@@ -1,7 +1,12 @@
 package com.eng.gp.project.controller;
 
+import static com.jayway.restassured.RestAssured.given;
+
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -9,12 +14,11 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
-import com.eng.gp.project.domain.ProjectTrackingItem;
-import com.eng.gp.project.services.ProjectTrackingService;
-import com.eng.gp.project.services.ProjectTrackingServiceBean;
 import com.eng.gp.project.util.StringTodate;
-import com.eng.gp.project.util.date.LocalDateTime;
+import com.gridpoint.energy.domainmodel.ProjectTrackingItem;
+import com.jayway.restassured.response.Response;
 
 /**
  * Servlet implementation class Project
@@ -34,55 +38,52 @@ public class Projectnew extends HttpServlet {
 		
 	}
 
+	@SuppressWarnings(value ="unused")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		
+		String createProject = "http://localhost:8080/publicApi/services/projectTracking/createProject";
 
-		long premisesId =88506;
-		ProjectTrackingService  service = new ProjectTrackingServiceBean();
+		
 		ProjectTrackingItem projectTracking = new ProjectTrackingItem();
 		try{
 			String projectName = request.getParameter("projectname");
 		String projectTypeid = request.getParameter("projecttype");
-		String listInvstName = request.getParameter("listInvstName");
+		String[] channelDisplayName = request.getParameter("channelDisplayNames").split(",");
+		String premisesId = request.getParameter("premisesid");
 		
-		String sdate = request.getParameter("start").replace("/", "-");
+		//String sdate = request.getParameter("start").replace("/", "-");
 		//sdate = sdate.replace("/", "-");
-		   String edate = request.getParameter("end").replace("/", "-");;
+		  // String edate = request.getParameter("end").replace("/", "-");;
 		//edate = edate.replace("/", "-");
-		Date pstartDate = null;
-		Date pendDate = null;
+		Date pstartDate =new Date(StringTodate.stringToDate(request.getParameter("start")));
 		
-		if(sdate!=null && !sdate.isEmpty() && !sdate.contains(" ")){
-			pstartDate = new Date(StringTodate.stringToDate(sdate));
-		}
-		if(edate!=null && !edate.isEmpty() && !sdate.contains(" ")){
-			pendDate = new Date (StringTodate.stringToEndDate(edate));
+		Date pendDate = new Date(StringTodate.stringToEndDate(request.getParameter("end")));
+		
+		Set<String>channels =new HashSet<String>();
+		for(String chString :channelDisplayName){
+			channels.add(chString);
 		}
 		
-		LocalDateTime startDate = null;
-		LocalDateTime endDate  = null;
-		if(pstartDate!=null){
-			startDate = LocalDateTime.forUtc(pstartDate.getTime());
-		}if(pendDate!=null){
-			endDate = LocalDateTime.forUtc(pendDate.getTime());
-		}
 		projectTracking.setProjectName(projectName);
 		projectTracking.setProjectTypeId(Long.parseLong(projectTypeid));
-		projectTracking.setPremisesId(premisesId);
-		projectTracking.setChannels(listInvstName.toString());
-		if(startDate!=null)projectTracking.setStartDate(new Date(startDate.instantInUtc()));
-		if(endDate!=null)projectTracking.setEndDate(new Date (endDate.instantInUtc()));
+		projectTracking.setPremisesId(Long.parseLong(premisesId));
+		/*projectTracking.setStartDate(pstartDate);
+		projectTracking.setEndDate(pstartDate);*/
+		projectTracking.setChannels(channels);
 		
-		service.saveProject(projectTracking);
+		HttpSession session = request.getSession(true);
+		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
+		Response restCreateProject = given().cookies(loginCookie).queryParam("username", "cianalyst").queryParam("password", "password").request().body(projectTracking).post(createProject);
+		String projectResponse = restCreateProject.asString();
+		System.out.println(projectResponse);
 		
-		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/sucess.jsp");
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/projectslist.jsp");
 		requestDispatcher.forward(request, response);
-		System.out.println("yessss");
 		
-			}catch(Exception exception){
-				exception.printStackTrace();
-		
-			}
-		
+		}catch(Exception e){
+			e.printStackTrace();
 		}
+
+	}
 
 }
