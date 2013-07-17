@@ -74,11 +74,11 @@ public class Projectnew extends HttpServlet {
 			
 		 projectName = request.getParameter("projectname");
 		 projectTypeid = request.getParameter("projecttype");
-		 channelDisplayName = request.getParameter("channelDisplayNames").split(",");
+		// channelDisplayName = request.getParameter("channelDisplayNames").split(",");
 		 premisesId = request.getParameter("premisesid");
 		 sDate = request.getParameter("start");
 		 eDate = request.getParameter("end");
-		
+		 channelDisplayName= request.getParameterValues("selectedAttributes");
 		//String sdate = request.getParameter("start").replace("/", "-");
 		//sdate = sdate.replace("/", "-");
 		  // String edate = request.getParameter("end").replace("/", "-");;
@@ -116,8 +116,10 @@ public class Projectnew extends HttpServlet {
 		}
 		
 		Set<String>channels =new HashSet<String>();
-		for(String chString :request.getParameterValues("selectedAttributes")){
+		if(channelDisplayName!=null){
+		for(String chString :channelDisplayName){
 			channels.add(chString);
+		 }
 		}
 		
 		/* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
