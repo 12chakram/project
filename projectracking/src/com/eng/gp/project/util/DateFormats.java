@@ -15,4 +15,5 @@ public class DateFormats {
     public static final String DATE_FORMAT_SITE_SERVICE_DATE = "MM/dd/yyyy";
     public static final String DATE_FORMAT_SITE_SERVICE_TIME = "HH:mm";
 	public static final String DATE_FORMAT_PROJECT_SERVICE_DATE = "yyyy-MM-dd";
+	public static final String DATE_FORMAT_PROJECT_TRACKING = "yyyy-MM-dd HH:mm:ss";
 }

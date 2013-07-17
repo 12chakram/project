@@ -40,6 +40,16 @@ import org.codehaus.jackson.map.DeserializationConfig.Feature;
 public class Login extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	
+	HttpSession session = null;
+	
+	String userName =null;
+	String password = null;
+	
+	String loginPath = "http://localhost:8080/publicApi/services/auth/login";
+	String getChannel = "http://localhost:8080/publicApi/services/data/getChannelsByEndpointId";
+	String getTenants = "http://localhost:8080/publicApi/services/projectTracking/getTenants";
+	String getPremises = "http://localhost:8080/publicApi/services/projectTracking/getPremises";
+	
 	private JsonToObject jsonToObject = new JsonToObject();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
 	ObjectMapper objectMapper = new ObjectMapper();
@@ -63,129 +73,156 @@ public class Login extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException 
 	{
-		HttpSession session = request.getSession(true);
-		String loginPath = "http://localhost:8080/publicApi/services/auth/login";
-		String getChannel = "http://localhost:8080/publicApi/services/data/getChannelsByEndpointId";
-		String getTenants = "http://localhost:8080/publicApi/services/projectTracking/getTenants";
-		String getPremises = "http://localhost:8080/publicApi/services/projectTracking/getPremises";
+		session = request.getSession(true);
 		
+		 userName = request.getParameter("j_username");
+		 password = request.getParameter("j_password");
 		
-		String userName = request.getParameter("j_username");
-		String password = request.getParameter("j_password");
 		ProjectTrackingService  service = new ProjectTrackingServiceBean();
 		
-		Response restResponse = given().queryParam("username", userName).queryParam("password", password).post(loginPath);
-			Map<String, String> cookieMap = restResponse.getCookies();			
-			session.setAttribute("loginCookies", cookieMap);
-			String responseJson = restResponse.asString();
-			System.out.println(responseJson);
-			UserDetails userDetails = (UserDetails) jsonToObject.getStringToObject(responseJson, "userDetails", UserDetails.class);
-			if(userDetails.getUsername()!=null){
-				
-				Long endpointId = Long.parseLong("50132");
-				
-				Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
-				Response restChannelResponse = given().cookies(loginCookie).queryParam("username", userName).queryParam("password", password).queryParam("endpointId",endpointId).post(getChannel);
-				String channelResponse = restChannelResponse.asString();
-				
-				System.out.println(channelResponse);
-				
-				//Channel channel = (Channel) jsonToObject.getStringToObject(channelResponse, "result", Channel.class);
-				//System.out.println(channel.toString());
-				
-				List<Channel> channelList =null;
-				
-				try {
-					JSONObject jsonObject = new JSONObject(channelResponse);
-					JSONArray jsonArray = (JSONArray) jsonObject.get("result");
-					if (jsonArray.length() > 0) 
-					{
-						objectMapper.registerSubtypes(Map.class);
-						objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-						objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_LOCALDATETIME));
-						
-						channelList = new ArrayList<Channel>();
-						for (int iCount = 0; iCount < jsonArray.length(); iCount++) 
-						{
-
-							JSONObject channelObject = jsonArray.getJSONObject(iCount); 
-							Channel channel =(Channel) objectMapper.readValue(channelObject.toString(), Channel.class);
-							 String withoutspace = channel.getDisplayName().replaceAll("\\s", "");
-							channel.setDisplayName(withoutspace);
-							channelList.add(channel);
-						}
-
-					}
-				}catch(Exception ex){
-					ex.printStackTrace();
-					
-				}
-				Tenant tenant =null;
-				try{
-					String usr = userName;
-					Map<String, String> loginCookie2 = (Map<String, String>) session.getAttribute("loginCookies");
-					Response restTenantResponse = given().cookies(loginCookie2).queryParam("username", userName).queryParam("password", password).queryParam("usr",usr).get(getTenants);
-					String tenantlResponse = restTenantResponse.asString();
-					
-					JSONObject jsonObject = new JSONObject(tenantlResponse);
-					JSONArray jsonArray = (JSONArray) jsonObject.get("result");
-					JSONObject tenantObject = jsonArray.getJSONObject(0); 
-					
-					 tenant = (Tenant)  objectMapper.readValue(tenantObject.toString(), Tenant.class);
-					
-					System.out.println(tenant.toString());
-					
-				}catch(Exception e){
-					e.printStackTrace();
-				}
-				
-				Map<String, String> loginCookie3 = (Map<String, String>) session.getAttribute("loginCookies");
-				Response restPremisesResponse = given().cookies(loginCookie3).queryParam("username", userName).queryParam("password", password).queryParam("tenantId",tenant.getTenantId()).get(getPremises);
-				String premiseslResponse = restPremisesResponse.asString();
-				
-				List<Premises> PremisesList =null;
-				
-				try{
-						JSONObject jsonObject = new JSONObject(premiseslResponse);
-						JSONArray jsonArray = (JSONArray) jsonObject.get("result");
-						if (jsonArray.length() > 0) 
-						{
-							PremisesList = new ArrayList<Premises>();
-							for (int iCount = 0; iCount < jsonArray.length(); iCount++) 
-							{
-								JSONObject premisesObject = jsonArray.getJSONObject(iCount); 
-								PremisesList.add((Premises) objectMapper.readValue(premisesObject.toString(), Premises.class));
-							}
-
-						}
-					
-					}catch(Exception ex){
-						ex.printStackTrace();
-					}
-				
-				if(channelList!=null && !channelList.isEmpty()){
-				 request.setAttribute("allChannels", channelList);
-				}
-				if(tenant!=null){
-					request.setAttribute("tenant", tenant);
-				}
-				
-				if(PremisesList!=null && !PremisesList.isEmpty()){
-					request.setAttribute("PremisesList", PremisesList);
-				}
-				List<ProjectType> projectslist;
-				projectslist = service.getAllProjectTypes();
-				request.setAttribute("allProjectstypes", projectslist);
-				if(channelList!=null && !channelList.isEmpty()){
-				 request.setAttribute("allChannels", channelList);
-				}
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/project22.jsp");
-				requestDispatcher.forward(request, response);
-
-			}else {
-				RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
-				requestDispatcher.forward(request, response);
-			}
+ UserDetails userDetails =  userLogin(userName,password);
+ 	if(userDetails.getUsername()!=null){
+		Long endpointId = Long.parseLong("50132");
+		
+		List<Channel> channelList  = getChannelsByEndPoint(endpointId);
+		Tenant tenant = getTenant();
+		List<Premises>PremisesList = null;
+		if(tenant!=null && tenant.getTenantId()!=null){
+			PremisesList =getPremises(tenant);
 		}
+		if(channelList!=null && !channelList.isEmpty()){
+		 request.setAttribute("allChannels", channelList);
+		}
+		if(tenant!=null){
+			request.setAttribute("tenant", tenant);
+		}
+		
+		if(PremisesList!=null && !PremisesList.isEmpty()){
+			request.setAttribute("PremisesList", PremisesList);
+		}
+		List<ProjectType> projectslist;
+		projectslist = service.getAllProjectTypes();
+		request.setAttribute("allProjectstypes", projectslist);
+		if(channelList!=null && !channelList.isEmpty()){
+		 request.setAttribute("allChannels", channelList);
+		}
+		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/project22.jsp");
+		requestDispatcher.forward(request, response);
+
+		} else {
+			RequestDispatcher requestDispatcher = request.getRequestDispatcher("/index.jsp");
+			requestDispatcher.forward(request, response);
+		}
+		}
+	
+	@SuppressWarnings("static-access")
+	private UserDetails userLogin(String userName, String password){
+		
+		Response restResponse = given().queryParam("username", userName).queryParam("password", password).post(loginPath);
+		Map<String, String> cookieMap = restResponse.getCookies();			
+		session.setAttribute("loginCookies", cookieMap);
+		String responseJson = restResponse.asString();
+		System.out.println(responseJson);
+		UserDetails userDetails = (UserDetails) jsonToObject.getStringToObject(responseJson, "userDetails", UserDetails.class);
+		return userDetails;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<Channel> getChannelsByEndPoint(Long endPointId){
+		
+		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
+		Response restChannelResponse = given().cookies(loginCookie).queryParam("username", userName).queryParam("password", password).queryParam("endpointId",endPointId).post(getChannel);
+		String channelResponse = restChannelResponse.asString();
+		
+		System.out.println(channelResponse);
+		
+		//Channel channel = (Channel) jsonToObject.getStringToObject(channelResponse, "result", Channel.class);
+		//System.out.println(channel.toString());
+		
+		List<Channel> channelList =null;
+		
+		try {
+			JSONObject jsonObject = new JSONObject(channelResponse);
+			JSONArray jsonArray = (JSONArray) jsonObject.get("result");
+			if (jsonArray.length() > 0) 
+			{
+				objectMapper.registerSubtypes(Map.class);
+				objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_LOCALDATETIME));
+				
+				channelList = new ArrayList<Channel>();
+				for (int iCount = 0; iCount < jsonArray.length(); iCount++) 
+				{
+
+					JSONObject channelObject = jsonArray.getJSONObject(iCount); 
+					Channel channel =(Channel) objectMapper.readValue(channelObject.toString(), Channel.class);
+					// String withoutspace = channel.getDisplayName().replaceAll("\\s", "");
+					//channel.setDisplayName(withoutspace);
+					channelList.add(channel);
+				}
+
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+			
+		}
+		
+		
+		return channelList;
+		
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Tenant getTenant(){
+	
+	Tenant  tenant =null;
+	try{
+		String usr = userName;
+		Map<String, String> loginCookie2 = (Map<String, String>) session.getAttribute("loginCookies");
+		Response restTenantResponse = given().cookies(loginCookie2).queryParam("username", userName).queryParam("password", password).queryParam("usr",usr).get(getTenants);
+		String tenantlResponse = restTenantResponse.asString();
+		
+		JSONObject jsonObject = new JSONObject(tenantlResponse);
+		JSONArray jsonArray = (JSONArray) jsonObject.get("result");
+		JSONObject tenantObject = jsonArray.getJSONObject(0); 
+		
+		 tenant = (Tenant)  objectMapper.readValue(tenantObject.toString(), Tenant.class);
+		
+		System.out.println(tenant.toString());
+		
+	}catch(Exception e){
+		e.printStackTrace();
+	}
+		return	tenant; 
+}
+	
+	@SuppressWarnings("unchecked")
+	private List<Premises> getPremises(Tenant tenant){
+		
+		Map<String, String> loginCookie3 = (Map<String, String>) session.getAttribute("loginCookies");
+		Response restPremisesResponse = given().cookies(loginCookie3).queryParam("username", userName).queryParam("password", password).queryParam("tenantId",tenant.getTenantId()).get(getPremises);
+		String premiseslResponse = restPremisesResponse.asString();
+		
+		List<Premises> PremisesList =null;
+		
+		try{
+				JSONObject jsonObject = new JSONObject(premiseslResponse);
+				JSONArray jsonArray = (JSONArray) jsonObject.get("result");
+				if (jsonArray.length() > 0) 
+				{
+					PremisesList = new ArrayList<Premises>();
+					for (int iCount = 0; iCount < jsonArray.length(); iCount++) 
+					{
+						JSONObject premisesObject = jsonArray.getJSONObject(iCount); 
+						PremisesList.add((Premises) objectMapper.readValue(premisesObject.toString(), Premises.class));
+					}
+
+				}
+			
+			}catch(Exception ex){
+				ex.printStackTrace();
+			}
+		return PremisesList;
+	}
 	
 	}

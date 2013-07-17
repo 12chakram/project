@@ -3,6 +3,7 @@
 <%@page import="java.util.ArrayList"%>
 <%@page import=" com.gridpoint.energy.domainmodel.Tenant"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ page trimDirectiveWhitespaces="true" %>
 
 <html>
 <head>
@@ -17,6 +18,7 @@
 
 <link rel="stylesheet" href="jquery-ui.css" />
 <link rel="stylesheet" href="bootstrap.css" />
+<link rel="stylesheet" href="styles.css" />
 
 <script src="jquery-ui-1.9.2.custom.min.js"></script>
 <script src="jquery-ui.js"></script>
@@ -187,6 +189,29 @@ $("#datepicker" ).datepicker({
     margin: 0;
     padding: 0;
     }
+    
+    .well1 {
+    background-color: #F5F5F5;
+    border: 1px solid #E3E3E3;
+    border-radius: 4px 4px 4px 4px;
+    box-shadow: 0 1px 1px rgba(0, 0, 0, 0.05) inset;
+    margin-bottom: 20px;
+    min-height: 980;
+    padding: 19px;
+}
+
+div.ul-dynatree-container {
+    background-color: white;
+    border: 1px dotted gray;
+    font-family: tahoma,arial,helvetica;
+    font-size: 10pt;
+    height: 50%;
+    margin: 0;
+    overflow: scroll;
+    padding: 3px;
+    white-space: nowrap;
+     max-height: 680px;
+}
 
 </style>
 
@@ -231,26 +256,32 @@ margin:0px;
 }
 </style>
 
+<script type="text/javascript">
+function showDiv() {
+	   document.getElementById('createprojectdiv').style.display = "block";
+	}
+</script>
 </head>
-<body>
- <form name='projectrackform' action="createProjectnew" method="post">
+<body class="well1">
 
+	<button id="create-project" class="btn btn-large" onclick="showDiv()" style="margin-top: 10px; margin-left: 966px;">Createnewproject</button>
+
+ <form name='projectrackform' action="createProjectnew" method="post">
+	
 		<div style="margin-left: 1262px; font-size: 12px; color: blue;" >
 			<%Tenant tenant = (Tenant)request.getAttribute("tenant");%>
 			<p>Welcome "${tenant.name}"</p>
 		</div>
-	<div class="ex2 ui-widget-header" style="max-width: 180px; margin-top: 10px;">
+	<div class="ul-dynatree-container" style="max-width: 180px; margin-top: -50px;">
 		<c:forEach var="premises" items="${PremisesList}">
 			<input id="pcheckbox" type="checkbox" name="premisesid"
-				value="${premises.id}"/>"${premises.name}"</br>
+				value="${premises.id}"/>${premises.name}</br>
 			</c:forEach>
 	</div>
-	
-	<div class="ex" style="margin-left: 200px; margin-top: -644px;" title="Create new Project">
+	<div id = "createprojectdiv" class="ex" style="margin-left: 200px; margin-top: -644px; display: none;" title="Create new Project">
 	 <div style="margin-top: 20px;">
 				Name the Project:<input type="text" name="projectname" id="name"
 					class="text ui-widget-content ui-corner-all" required="required" />
-
 				Select Project type:<select name="projecttype"
 					class="text ui-widget-content ui-corner-all" required="required">
 					<option value="">
@@ -269,7 +300,7 @@ margin:0px;
 							style="width: 280px; height: 150px;"
 							onDblClick="moveSelectedOptions(this.form['attributes'],this.form['selectedAttributes'])">
 								<c:forEach var="channel" items="${allChannels}">
-									<option value=${channel.displayName}>${channel.displayName}</option>
+									<option value="${channel.displayName}">${channel.displayName}</option>
 								</c:forEach>
 						</select></td>
 						<td align="center" valign="top" width="50px;"><br>
@@ -284,9 +315,9 @@ margin:0px;
 							style="margin-left: 50px; height: 1px; width: 5px; margin-top: -43px; color: #0088cc; cursor: pointer; order-color: transparent;"
 							onclick="moveAllSelectedOptions(this.form['attributes'],this.form['selectedAttributes'])"><br>
 						<td align="left" valign="top" width="40%">
-						<select
+						<select 
 							name="selectedAttributes" id="selectedAttributesId"
-							multiple="true" size="4"
+							multiple="multiple" size="4" 
 							style="width: 290px; margin-left: 100px; height: 150px;"
 							onDblClick="moveSelectedOptions(this.form['selectedAttributes'],this.form['attributes'])">
 						</select></td>
@@ -298,10 +329,7 @@ margin:0px;
 				</table>
 				<input type="hidden" name="channelDisplayNames" value=""
 					id="hiddenFormFieldName" /> <br> <br> <input
-					type="submit" value="save"
-					onclick="setLenderValues(this.form['selectedAttributes']);"/> 
-					<input  id="cancelbu" type="button" value="Cancle" />
-			
+					type="submit" value="save"/> 
 			</div>	
 			</div>	
 			</form>		

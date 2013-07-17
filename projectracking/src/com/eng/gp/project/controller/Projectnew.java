@@ -3,8 +3,11 @@ package com.eng.gp.project.controller;
 import static com.jayway.restassured.RestAssured.given;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,8 +19,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import com.eng.gp.project.util.StringTodate;
+import org.apache.commons.lang3.StringUtils;
+import org.codehaus.jackson.JsonParseException;
+import org.codehaus.jackson.map.DeserializationConfig.Feature;
+import org.codehaus.jackson.map.JsonMappingException;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import com.eng.gp.project.util.DateFormats;
+import com.eng.gp.project.util.JsonToObject;
+import com.google.gson.Gson;
+import com.gridpoint.energy.domainmodel.Channel;
 import com.gridpoint.energy.domainmodel.ProjectTrackingItem;
+import com.gridpoint.energy.domainmodel.ProjectTrackingItemForCreate;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -26,14 +42,27 @@ import com.jayway.restassured.response.Response;
 @WebServlet("/createProjectnew")
 public class Projectnew extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-       
+	
+	private static final String createProject = "http://localhost:8080/publicApi/services/projectTracking/createProject";
+	private static final String getProjectsByPremises = "http://localhost:8080/publicApi/services/projectTracking/getProjectsByPremisesId";
+	
+	HttpSession session = null;
+	private JsonToObject jsonToObject = new JsonToObject();
+	ObjectMapper objectMapper = new ObjectMapper();
+	
+	String projectName;
+	String projectTypeid;
+	String[] channelDisplayName;
+	String premisesId;
+	String sDate;
+	String eDate;
+	
+	StringBuffer sb;
    
     public Projectnew() {
         super();
       
     }
-
-	
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 	}
@@ -41,41 +70,85 @@ public class Projectnew extends HttpServlet {
 	@SuppressWarnings(value ="unused")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
-		String createProject = "http://localhost:8080/publicApi/services/projectTracking/createProject";
-
-		
-		ProjectTrackingItem projectTracking = new ProjectTrackingItem();
 		try{
-			String projectName = request.getParameter("projectname");
-		String projectTypeid = request.getParameter("projecttype");
-		String[] channelDisplayName = request.getParameter("channelDisplayNames").split(",");
-		String premisesId = request.getParameter("premisesid");
+			
+		 projectName = request.getParameter("projectname");
+		 projectTypeid = request.getParameter("projecttype");
+		 channelDisplayName = request.getParameter("channelDisplayNames").split(",");
+		 premisesId = request.getParameter("premisesid");
+		 sDate = request.getParameter("start");
+		 eDate = request.getParameter("end");
 		
 		//String sdate = request.getParameter("start").replace("/", "-");
 		//sdate = sdate.replace("/", "-");
 		  // String edate = request.getParameter("end").replace("/", "-");;
 		//edate = edate.replace("/", "-");
-		Date pstartDate =new Date(StringTodate.stringToDate(request.getParameter("start")));
 		
-		Date pendDate = new Date(StringTodate.stringToEndDate(request.getParameter("end")));
+		
+		String str_date_time = null;
+		String end_date_time = null;
+		if(!StringUtils.isBlank(sDate)){
+		sb = new StringBuffer();
+		long mill = System.currentTimeMillis();
+		Date tempDate = new Date(mill);
+		int hours = tempDate.getHours();
+		int min = tempDate.getMinutes();
+		int sec = tempDate.getSeconds();
+		sb.append(sDate + " ");
+		sb.append(hours);
+		sb.append(":");
+		sb.append(min);
+		sb.append(":");
+		sb.append(sec);
+		str_date_time = sb.toString();
+		}
+		
+		if(!StringUtils.isBlank(eDate)){
+		
+		sb = new StringBuffer();
+		sb.append(eDate + " ");
+		sb.append(23);
+		sb.append(":");
+		sb.append(59);
+		sb.append(":");
+		sb.append(59);
+		end_date_time = sb.toString();
+		}
 		
 		Set<String>channels =new HashSet<String>();
-		for(String chString :channelDisplayName){
+		for(String chString :request.getParameterValues("selectedAttributes")){
 			channels.add(chString);
 		}
 		
-		projectTracking.setProjectName(projectName);
-		projectTracking.setProjectTypeId(Long.parseLong(projectTypeid));
-		projectTracking.setPremisesId(Long.parseLong(premisesId));
-		/*projectTracking.setStartDate(pstartDate);
-		projectTracking.setEndDate(pstartDate);*/
-		projectTracking.setChannels(channels);
+		/* SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date s = sdf.parse(str_date_time);
+		Date e = sdf.parse(end_date_time);
+		Long st = s.getTime();
+		Long et = e.getTime();
+		String sl =String.valueOf(st);
+		String el = String.valueOf(et);*/
 		
-		HttpSession session = request.getSession(true);
-		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
-		Response restCreateProject = given().cookies(loginCookie).queryParam("username", "cianalyst").queryParam("password", "password").request().body(projectTracking).post(createProject);
-		String projectResponse = restCreateProject.asString();
-		System.out.println(projectResponse);
+		ProjectTrackingItemForCreate project = new ProjectTrackingItemForCreate();
+		project.setProjectName(projectName);
+		project.setProjectTypeId(Long.parseLong(projectTypeid));
+		project.setPremisesId(Long.parseLong(premisesId));
+		project.setStartDate(str_date_time);
+		project.setEndDate(end_date_time);
+		project.setChannels(channels);
+		
+		Gson gson = new Gson();
+		String json = gson.toJson(project);
+		session = request.getSession(true);
+		ProjectTrackingItem createdprojectTracking = createProject(json);
+		List<ProjectTrackingItem> allProjects = null;
+		
+		if(createdprojectTracking!=null && createdprojectTracking.getProjectId()!=null){
+			allProjects = getProjectsByPremisesId(createdprojectTracking.getPremisesId());
+		}
+		
+		if(allProjects!=null){
+			request.setAttribute("allProjects", allProjects);
+		}
 		
 		RequestDispatcher requestDispatcher = request.getRequestDispatcher("/projectslist.jsp");
 		requestDispatcher.forward(request, response);
@@ -85,5 +158,75 @@ public class Projectnew extends HttpServlet {
 		}
 
 	}
+	private ProjectTrackingItem createProject(String jsonProjectString) throws JSONException, JsonParseException, JsonMappingException, IOException{
+	 
+		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
+		Response restCreateProject = given().cookies(loginCookie).queryParam("username", "cianalyst").queryParam("password", "password").request().body(jsonProjectString).post(createProject);
+		String projectResponse = restCreateProject.asString();
+		System.out.println(projectResponse);
+		
+		objectMapper.registerSubtypes(Map.class);
+		objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_LOCALDATETIME));
+		objectMapper.configure(Feature.READ_ENUMS_USING_TO_STRING, false);
+		
+		ProjectTrackingItem createdProject = getProjectFromJSon(projectResponse);
+		
+		return createdProject;
+	}
+	
+	private ProjectTrackingItem getProjectFromJSon(String jsonResponse) throws JSONException, JsonParseException, 
+	JsonMappingException, IOException{
+		ProjectTrackingItem project = null;
+		if (jsonResponse != null
+				&& !jsonResponse.equals("{\"result\":\"\"}")
+				&& !jsonResponse.equals("{\"result\":{}}")
+				&& !jsonResponse.contains("\"fault\":")) {
+			JSONObject jsonObject = new JSONObject(jsonResponse);
+			JSONObject jsonObject1 = (JSONObject) jsonObject.get("result");
 
+			objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_PROJECT_TRACKING));
+			project = objectMapper.readValue(jsonObject1.toString(),ProjectTrackingItem.class);
+		}
+		return project;
+	}
+	
+	@SuppressWarnings("unchecked")
+	private List<ProjectTrackingItem> getProjectsByPremisesId(Long premisesId){
+		
+		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
+		Response restProjectResponse = given().cookies(loginCookie).queryParam("username", "cianalyst").queryParam("password", "password").queryParam("premisesId",premisesId).get(getProjectsByPremises);
+		String projectResponse = restProjectResponse.asString();
+		
+		System.out.println(projectResponse);
+		
+		List<ProjectTrackingItem> projectsList =null;
+		
+		try {
+			JSONObject jsonObject = new JSONObject(projectResponse);
+			JSONArray jsonArray = (JSONArray) jsonObject.get("result");
+			if (jsonArray.length() > 0) 
+			{
+				objectMapper.registerSubtypes(Map.class);
+				objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+				objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_LOCALDATETIME));
+				
+				projectsList = new ArrayList<ProjectTrackingItem>();
+				for (int iCount = 0; iCount < jsonArray.length(); iCount++) 
+				{
+					JSONObject projectObject = jsonArray.getJSONObject(iCount); 
+					ProjectTrackingItem project =(ProjectTrackingItem) objectMapper.readValue(projectObject.toString(), ProjectTrackingItem.class);
+					projectsList.add(project);
+				}
+
+			}
+		}catch(Exception ex){
+			ex.printStackTrace();
+			
+		}
+		
+		
+		return projectsList;
+		
+	}
 }

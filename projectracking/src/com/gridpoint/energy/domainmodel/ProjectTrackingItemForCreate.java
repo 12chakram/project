@@ -1,27 +1,25 @@
 package com.gridpoint.energy.domainmodel;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.Map;
 import java.util.Set;
 
-public class ProjectTrackingItem implements Serializable {
+import org.codehaus.jackson.map.annotate.JsonSerialize;
+
+import com.gridpoint.energy.publicapi.util.JacksonProjectTrackingItemSerializer;
+@JsonSerialize(using=JacksonProjectTrackingItemSerializer.class)
+public class ProjectTrackingItemForCreate implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 
 	private Long projectId;
 	private Long premisesId;
 	private String projectName;
-	private Date startDate;
-	private Date endDate;
+	private String startDate;
+	private String endDate;
 	private Long projectTypeId;
 	private String projectType;
 	private Set<String> channels;
-	private String projectStatus;
-	private Boolean deprecated;
-	private String siteName;
-	private Map<String, ProjectTrackingErrorWarning> errorsAndWarnings;
-	
+
 	public Long getProjectId() {
 		return projectId;
 	}
@@ -64,31 +62,6 @@ public class ProjectTrackingItem implements Serializable {
 		this.projectType = projectType;
 	}
 
-
-	public String getProjectStatus() {
-		return projectStatus;
-	}
-
-	public void setProjectStatus(String projectStatus) {
-		this.projectStatus = projectStatus;
-	}
-
-	public Boolean getDeprecated() {
-		return deprecated;
-	}
-
-	public void setDeprecated(Boolean deprecated) {
-		this.deprecated = deprecated;
-	}
-
-	public String getSiteName() {
-		return siteName;
-	}
-
-	public void setSiteName(String siteName) {
-		this.siteName = siteName;
-	}
-
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -109,7 +82,7 @@ public class ProjectTrackingItem implements Serializable {
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		ProjectTrackingItem other = (ProjectTrackingItem) obj;
+		ProjectTrackingItemForCreate other = (ProjectTrackingItemForCreate) obj;
 		if (projectId == null) {
 			if (other.projectId != null) {
 				return false;
@@ -128,29 +101,20 @@ public class ProjectTrackingItem implements Serializable {
 		this.channels = channels;
 	}
 
-	public Date getStartDate() {
+	public String getStartDate() {
 		return startDate;
 	}
 
-	public void setStartDate(Date startDate) {
+	public void setStartDate(String startDate) {
 		this.startDate = startDate;
 	}
 
-	public Date getEndDate() {
+	public String getEndDate() {
 		return endDate;
 	}
 
-	public void setEndDate(Date endDate) {
+	public void setEndDate(String endDate) {
 		this.endDate = endDate;
 	}
 
-	public Map<String, ProjectTrackingErrorWarning> getErrorsAndWarnings() {
-		return errorsAndWarnings;
-	}
-
-	public void setErrorsAndWarnings(
-			Map<String, ProjectTrackingErrorWarning> errorsAndWarnings) {
-		this.errorsAndWarnings = errorsAndWarnings;
-	}
-		
 }

@@ -1,6 +1,7 @@
 <%@page import="com.eng.gp.project.domain.ProjectType"%>
 <!DOCTYPE html>
 <%@page import="java.util.ArrayList"%>
+<%@page import=" com.gridpoint.energy.domainmodel.Tenant"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 
 <html>
@@ -149,12 +150,55 @@ $("#datepicker" ).datepicker({
 	});
 
 </script>
+
+<style>
+div.ex
+{
+background:url("createproject.png") repeat-x scroll 1200% 1% ;
+border: 1px solid #AAAAAA;
+width:862px;
+padding:10px;
+border:3px solid gray;
+margin:0px;
+height: 400px;
+}
+</style>
+
+<style>
+div.ex2
+{
+width:162px;
+padding:10px;
+border:3px solid gray;
+margin:0px;
+}
+</style>
+
+
+<script type="text/javascript">
+function showDiv() {
+	   document.getElementById('dialog-form').style.display = "block";
+	}
+</script>
+
 </head>
 <body>
-	<button id="create-user" style="margin-top: 10px; margin-left: 966px;">Createnewproject</button>
-	<div id="dialog-form" title="Create new Project">
-		<%-- <jsp:useBean id="projectstypes" class="com.eng.gp.project.data.ProjectTypes" scope="page"/>  --%>
-		<form name='projectrackform' action="createProjectnew" method="post">
+	<button id="create-user" onclick="showDiv()" style="margin-top: 10px; margin-left: 966px;">Createnewproject</button>
+	
+	<form name='projectrackform' action="createProjectnew" method="post">
+	<div style="margin-left: 1262px; font-size: 12px; color: blue;" >
+			<%Tenant tenant = (Tenant)request.getAttribute("tenant");%>
+			<p>Welcome "${tenant.name}"</p>
+		</div>
+	<div class="ex2 ui-widget-header" style="max-width: 180px; margin-top: 10px;">
+		<c:forEach var="premises" items="${PremisesList}">
+			<input id="pcheckbox" type="checkbox" name="premisesid"
+				value="${premises.id}"/>${premises.name}</br>
+			</c:forEach>
+	</div>
+	
+	<div id="dialog-form" style="display: none;" title="Create new Project">
+		
 			Name the Project:<input type="text" name="projectname" id="name"
 				class="text ui-widget-content ui-corner-all" required="required" />
 

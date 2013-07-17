@@ -161,15 +161,14 @@
 			</strong>
 		</h3>
 	</header>
-
-
-	  <table  cellpadding="0" cellspacing="0" border="0" id="addList" class="table table-striped table-bordered table-condensed">
+	  <table cellpadding="0" cellspacing="0" border="0" id="addList" class="table table-striped table-bordered table-condensed">
 		<thead>
 		  <tr>
+		  	<th><span class="underline">PremisesId</span></th>
+		  	<th><span class="underline">SiteName</span></th>
 			<th><span class="underline">ProjectId</span></th>
 			<th><span class="underline">ProjectName</span></th>
 			<th><span class="underline">ProjectType</span></th>
-			<th><span class="underline">PremisesId</span></th>
 			<th><span class="underline">StartDate</span></th>
 			<th><span class="underline">EndDate</span></th>
 			<th><span class="underline">Channels</span></th>
@@ -180,17 +179,18 @@
 		 <tbody>
 		 	 <c:forEach var="project" items="${allProjects}"> 
                  <tr style="background-color: ;">	
+                	<td>${project.premisesId}</td>
+                	<td>${project.siteName}</td>
 					<td>${project.projectId}</td>
                   	<td>${project.projectName}</td>
-                  	<td>${project.projectTypeId}</td>
-                  	<td>${project.premisesId}</td>
+                  	<td>${project.projectType}</td>
                   	<td>${project.startDate}</td>
                   	<td>${project.endDate}</td>
                   	<td>${project.channels}</td>
                   	<td>${project.projectStatus}</td>
                   	<td>
                   		<a class="btn btn-link" href="deleteProjectByProjectId?projectId=${project.projectId}" class="btn btn-primary">
-                  			<span><strong>Delete Alarms</strong></span>
+                  			<span><strong>Delete Project</strong></span>
                   		</a>
                   	</td>
                   </tr>

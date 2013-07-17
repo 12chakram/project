@@ -1,6 +1,6 @@
 package com.gridpoint.energy.publicapi.util;
 
-public interface JSON {/*
+public interface JSON {
 
 	public static interface BILLING_RECORD {
 		static final String PREMISES_ID = "premisesId";
@@ -49,7 +49,7 @@ public interface JSON {/*
 		static final String METADATA = "metadata";
         static final String LEGACY = "legacy";
 
-        *//** @see com.gridpoint.energy.domainmodel.Channel#displayedByDefault *//*
+        /** @see com.gridpoint.energy.domainmodel.Channel#displayedByDefault */
         static final String DISPLAYED_BY_DEFAULT = "displayedByDefault";
 	}
 
@@ -251,33 +251,6 @@ public interface JSON {/*
 		static  final  String  STATUS = "projectStatus";
 		static  final  String    DEPRECATED = "deprecated";
 		static  final  String    PROJECT_TYPE ="projectType";
-		static  final  String    ERROR_WARNINGS ="errorAndWarnings";
+		static  final  String  PROJECT_ERROR_WARNING ="errorsAndWarnings";
 	}
-	
-*/
-
-	public static interface CHANNEL {
-		static final String DICTIONARY_NAME = "dictionaryName";
-		static final String SCALE = "scale";
-		static final String CHANNEL_NAME = "channelName";
-		static final String CALC_TYPE = "calcType";
-		static final String CHANNEL_ID = "channelId";
-		static final String REFERENCE_ID = "referenceId";
-		static final String DICTIONARY_UNIT = "dictionaryUnit";
-		static final String DISPLAY_NAME = "displayName";
-		static final String DISABLED = "disabled";
-	    static final String INVISIBLE = "invisible";
-		static final String GRANULARITY = "granularity";
-		static final String TOTAL_TYPE = "totalType";
-		static final String CATEGORY = "category";
-		static final String SUBCATEGORY = "subcategory";
-		static final String MEASURETYPE = "measureType";
-		static final String UNIT_OF_MEASURE = "unitOfMeasure";
-		static final String UNIT_IDENTIFIER = "unitIdentifier";
-		static final String METADATA = "metadata";
-        static final String LEGACY = "legacy";
-
-        //** @see com.gridpoint.energy.domainmodel.Channel#displayedByDefault *//*
-        static final String DISPLAYED_BY_DEFAULT = "displayedByDefault";
-	}
-	}
+}
