@@ -252,5 +252,6 @@ public interface JSON {
 		static  final  String    DEPRECATED = "deprecated";
 		static  final  String    PROJECT_TYPE ="projectType";
 		static  final  String  PROJECT_ERROR_WARNING ="errorsAndWarnings";
+		static final String SITE_NAME = "siteName";
 	}
 }

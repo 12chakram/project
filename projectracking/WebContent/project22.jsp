@@ -8,6 +8,7 @@
 <html>
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<link rel="stylesheet" type="text/css" href="css/style.css" />
 <meta name="decorator" content="app" />
 <title>Alarm Library</title>
 
@@ -236,7 +237,6 @@ div.ul-dynatree-container {
 <style>
 div.ex
 {
-background:url("createproject.png") repeat-x scroll 1200% 1% ;
 border: 1px solid #AAAAAA;
 width:862px;
 padding:10px;
@@ -258,27 +258,44 @@ margin:0px;
 
 <script type="text/javascript">
 function showDiv() {
-	   document.getElementById('createprojectdiv').style.display = "block";
+	   document.getElementById('site_content').style.display = "block";
 	}
 </script>
 </head>
-<body class="well1">
+<body>
+	<div id="main">
+	<header>
+      <div id="logo">
+        <div id="logo_text">
+          <!-- class="logo_colour", allows you to change the colour of the text -->
+          <h1><a href="index.html">CCS3<span class="logo_colour">_abstract</span></a></h1>
+          <h2>Simple. Contemporary. Website Template.</h2>
+        </div>
+      </div>
+      <nav>
+        <div id="menu_container">
+          <ul class="sf-menu" id="nav">
+            <li><button id="create-project" class="btn btn-large" onclick="showDiv()">Createnewproject</button></li>
+            </ul>
+            </div>
+            </nav>
+     </header>
 
-	<button id="create-project" class="btn btn-large" onclick="showDiv()" style="margin-top: 10px; margin-left: 966px;">Createnewproject</button>
-
- <form name='projectrackform' action="createProjectnew" method="post">
+ <form name='projectrackform' action="createProject" method="post">
 	
 		<div style="margin-left: 1262px; font-size: 12px; color: blue;" >
 			<%Tenant tenant = (Tenant)request.getAttribute("tenant");%>
 			<p>Welcome "${tenant.name}"</p>
 		</div>
-	<div class="ul-dynatree-container" style="max-width: 180px; margin-top: -50px;">
-		<c:forEach var="premises" items="${PremisesList}">
-			<input id="pcheckbox" type="checkbox" name="premisesid"
-				value="${premises.id}"/>${premises.name}</br>
-			</c:forEach>
-	</div>
-	<div id = "createprojectdiv" class="ex" style="margin-left: 200px; margin-top: -644px; display: none;" title="Create new Project">
+        <div class="sidebar" style="overflow: scroll;">
+				<c:forEach var="premises" items="${PremisesList}">
+					<input id="pcheckbox" type="checkbox" name="premisesid"
+						value="${premises.id}"/>${premises.name}</br>
+					</c:forEach>
+			</div>
+	  
+	
+	<div id="site_content" style="margin-left: 300px; margin-top: -500px; display: none; border: 3px;" title="Create new Project">
 	 <div style="margin-top: 20px;">
 				Name the Project:<input type="text" name="projectname" id="name"
 					class="text ui-widget-content ui-corner-all" required="required" />
@@ -322,16 +339,14 @@ function showDiv() {
 							onDblClick="moveSelectedOptions(this.form['selectedAttributes'],this.form['attributes'])">
 						</select></td>
 					</tr>
-					<tr>
-						<td width="33%"></td>
-						<td width="33%"></td>
-					</tr>
+					
 				</table>
 				<input type="hidden" name="channelDisplayNames" value=""
 					id="hiddenFormFieldName" /> <br> <br> <input
 					type="submit" value="save"/> 
 			</div>	
 			</div>	
-			</form>		
+			</form>	
+  </div>			
 </body>
 </html>

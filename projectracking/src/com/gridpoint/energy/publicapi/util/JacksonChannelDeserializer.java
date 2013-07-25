@@ -42,8 +42,8 @@ public class JacksonChannelDeserializer extends JsonDeserializer<Channel>  {
             	channel.setCategory(jp.getText());
             } else if (JSON.CHANNEL.SUBCATEGORY.equals(fieldname)) {
             	channel.setSubcategory(jp.getText());
-            } else if (JSON.CHANNEL.TOTAL_TYPE.equals(fieldname)) {
-            	channel.setTotalType(ChannelTotalType.fromByte(jp.getIntValue()));
+            } else if (JSON.CHANNEL.TOTAL_TYPE.equals(fieldname)) {            	
+            	channel.setTotalType(ChannelTotalType.fromString(jp.getText()));
             } else if (JSON.CHANNEL.DISABLED.equals(fieldname)) {
             	channel.setDisabled(jp.getBooleanValue());
             } else if (JSON.CHANNEL.UNIT_IDENTIFIER.equals(fieldname)) {

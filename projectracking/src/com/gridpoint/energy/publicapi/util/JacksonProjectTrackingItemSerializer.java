@@ -66,9 +66,12 @@ public class JacksonProjectTrackingItemSerializer extends JsonSerializer<Project
 			jgen.writeObjectField(JSON.PROJECT_TRACKING.END_DATE,
 					projectTracking.getEndDate());
 		}
-		if (projectTracking.getChannels() != null) {
-			jgen.writeObjectField(JSON.PROJECT_TRACKING.CHANNELS,
-					projectTracking.getChannels());
+		if (projectTracking.getChannels() != null && !projectTracking.getChannels().isEmpty()) {
+				jgen.writeObjectField(JSON.PROJECT_TRACKING.CHANNELS,projectTracking.getChannels());
+		}
+		if (projectTracking.getSiteName() != null && !projectTracking.getSiteName().isEmpty()) {
+			jgen.writeObjectField(JSON.PROJECT_TRACKING.SITE_NAME,
+					projectTracking.getSiteName());
 		}
 		if (projectTracking.getErrorsAndWarnings() != null) {
 			jgen.writeObjectField(JSON.PROJECT_TRACKING.PROJECT_ERROR_WARNING,

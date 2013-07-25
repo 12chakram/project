@@ -18,7 +18,7 @@ public class ProjectTrackingItemForCreate implements Serializable {
 	private String endDate;
 	private Long projectTypeId;
 	private String projectType;
-	private Set<String> channels;
+	private Set<String> channelDisplayNames;
 
 	public Long getProjectId() {
 		return projectId;
@@ -93,14 +93,6 @@ public class ProjectTrackingItemForCreate implements Serializable {
 		return true;
 	}
 
-	public Set<String> getChannels() {
-		return channels;
-	}
-
-	public void setChannels(Set<String> channels) {
-		this.channels = channels;
-	}
-
 	public String getStartDate() {
 		return startDate;
 	}
@@ -115,6 +107,14 @@ public class ProjectTrackingItemForCreate implements Serializable {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	public Set<String> getChannelDisplayNames() {
+		return channelDisplayNames;
+	}
+
+	public void setChannelDisplayNames(Set<String> channelDisplayNames) {
+		this.channelDisplayNames = channelDisplayNames;
 	}
 
 }

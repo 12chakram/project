@@ -26,4 +26,32 @@ public enum ChannelTotalType {
         
         return UNKNOWN;
     }
+    
+    public static ChannelTotalType fromString(String channelType) {    	
+        if(channelType.equals("ALTERNATE_TOTAL"))
+        {
+        	return ALTERNATE_TOTAL;
+        }        
+        else if(channelType.equals("SUBMETERED"))
+        {
+        	return SUBMETERED;
+        }
+        else if(channelType.equals("TOTAL"))
+        {
+        	return TOTAL;
+        }
+        else if(channelType.equals("NON_TOTAL"))
+        {
+        	return NON_TOTAL;
+        }
+        else if(channelType.equals("GENERATED"))
+        {
+        	return GENERATED;
+        }
+        else
+        {
+        return UNKNOWN;
+        }
+    }
+    
 }

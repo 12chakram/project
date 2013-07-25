@@ -147,6 +147,7 @@ public class Login extends HttpServlet {
 			if (jsonArray.length() > 0) 
 			{
 				objectMapper.registerSubtypes(Map.class);
+				objectMapper.configure(Feature.READ_ENUMS_USING_TO_STRING,false);
 				objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 				objectMapper.getDeserializationConfig().setDateFormat(new SimpleDateFormat(DateFormats.DATE_FORMAT_LOCALDATETIME));
 				

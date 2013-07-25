@@ -17,7 +17,7 @@ import com.eng.gp.project.services.ProjectTrackingServiceBean;
 /**
  * Servlet implementation class Project
  */
-@WebServlet("/createProject")
+@WebServlet("/createProject1")
 public class Project extends HttpServlet {
 	private static final long serialVersionUID = 1L;
        

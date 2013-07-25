@@ -2,6 +2,7 @@ package com.gridpoint.energy.domainmodel;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -16,12 +17,13 @@ public class ProjectTrackingItem implements Serializable {
 	private Date endDate;
 	private Long projectTypeId;
 	private String projectType;
-	private Set<String> channels;
+	private Set<String> channelDisplayNames;
 	private String projectStatus;
 	private Boolean deprecated;
 	private String siteName;
 	private Map<String, ProjectTrackingErrorWarning> errorsAndWarnings;
-	
+	private List<Channel> channels;
+
 	public Long getProjectId() {
 		return projectId;
 	}
@@ -46,7 +48,21 @@ public class ProjectTrackingItem implements Serializable {
 		this.projectName = projectName;
 	}
 	
-	
+	public Date getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(Date startDate) {
+		this.startDate = startDate;
+	}
+
+	public Date getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(Date endDate) {
+		this.endDate = endDate;
+	}
 
 	public Long getProjectTypeId() {
 		return projectTypeId;
@@ -64,6 +80,13 @@ public class ProjectTrackingItem implements Serializable {
 		this.projectType = projectType;
 	}
 
+	public Set<String> getChannelDisplayNames() {
+		return channelDisplayNames;
+	}
+
+	public void setChannelDisplayNames(Set<String> channelDisplayNames) {
+		this.channelDisplayNames = channelDisplayNames;
+	}
 
 	public String getProjectStatus() {
 		return projectStatus;
@@ -87,6 +110,23 @@ public class ProjectTrackingItem implements Serializable {
 
 	public void setSiteName(String siteName) {
 		this.siteName = siteName;
+	}
+
+	public Map<String, ProjectTrackingErrorWarning> getErrorsAndWarnings() {
+		return errorsAndWarnings;
+	}
+
+	public void setErrorsAndWarnings(
+			Map<String, ProjectTrackingErrorWarning> errorsAndWarnings) {
+		this.errorsAndWarnings = errorsAndWarnings;
+	}
+
+	public List<Channel> getChannels() {
+		return channels;
+	}
+	
+	public void setChannels(List<Channel> channels) {
+		this.channels = channels;
 	}
 
 	@Override
@@ -120,37 +160,4 @@ public class ProjectTrackingItem implements Serializable {
 		return true;
 	}
 
-	public Set<String> getChannels() {
-		return channels;
-	}
-
-	public void setChannels(Set<String> channels) {
-		this.channels = channels;
-	}
-
-	public Date getStartDate() {
-		return startDate;
-	}
-
-	public void setStartDate(Date startDate) {
-		this.startDate = startDate;
-	}
-
-	public Date getEndDate() {
-		return endDate;
-	}
-
-	public void setEndDate(Date endDate) {
-		this.endDate = endDate;
-	}
-
-	public Map<String, ProjectTrackingErrorWarning> getErrorsAndWarnings() {
-		return errorsAndWarnings;
-	}
-
-	public void setErrorsAndWarnings(
-			Map<String, ProjectTrackingErrorWarning> errorsAndWarnings) {
-		this.errorsAndWarnings = errorsAndWarnings;
-	}
-		
 }
