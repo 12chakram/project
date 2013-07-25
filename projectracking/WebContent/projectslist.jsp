@@ -1,19 +1,19 @@
 <%@page import="com.eng.gp.project.domain.ProjectTrackingItem"%>
 <!DOCTYPE html>
 <%@page import="java.util.ArrayList"%>
-
-<link rel="stylesheet" href="jquery-ui.css" />
-<link rel="stylesheet" href="bootstrap.css" />
-
-<script src="jquery-ui-1.9.2.custom.min.js"></script>
-<script src="jquery-ui.js"></script>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@include file="/WEB-INF/view/static.jsp" %>
 <html>
 	<head>
-	  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+	
+	<link rel="stylesheet" href="jquery-ui.css" />
+	<link rel="stylesheet" href="bootstrap.css" />
+	<script src="jquery-ui-1.9.2.custom.min.js"></script>
+	<script src="jquery-ui.js"></script>
+
+<meta http-equiv="content-type" content="text/html; charset=utf-8">
 	  <meta name="decorator" content="app" />
-		<title>Alarm Library</title>
+		<title>Projects List</title>
 	<script language="javascript">
 		function hasOptions(obj) {
 			if (obj != null && obj.options != null) {
@@ -141,13 +141,13 @@
 			<div class="btn-toolbar">
 				<div class="btn-group pull-right">				
 				<a class="btn btn-link" href="removeAllProjects?action=deleteProjects" class="btn btn-primary">
-					<span><strong>Delete Alarms</strong></span>
+					<span><strong>Delete Projects</strong></span>
 				</a>
 				<a class="btn btn-link" href="#" class="btn btn-primary">
-					<span><strong>Import Alarms</strong></span>
+					<span><strong>Import Projects</strong></span>
 				</a>
 				<a class="btn btn-link" href="" >
-					<span><strong>Export Alarms</strong></span>
+					<span><strong>Export Projects</strong></span>
 				</a>
 				</div>
 			</div>
@@ -173,6 +173,7 @@
 			<th><span class="underline">EndDate</span></th>
 			<th><span class="underline">Channels</span></th>
 			<th><span class="underline">Status</span></th>
+			<th><span class="underline">Description</span></th>
 			<th>Actions</th>
 		  </tr>
 		</thead>
@@ -186,15 +187,18 @@
                   	<td>${project.projectType}</td>
                   	<td>${project.startDate}</td>
                   	<td>${project.endDate}</td>
-                  	<td>${project.channels}</td>
-                  	<td>${project.projectStatus}</td>
+					<td><c:forEach var="channel" items="${project.channels}"> 
+                  		${channel.displayName}
+                  	</c:forEach></td>
+					<td>${project.projectStatus}</td>
+                  	<td>${project.description}</td>
                   	<td>
                   		<a class="btn btn-link" href="deleteProjectByProjectId?projectId=${project.projectId}" class="btn btn-primary">
                   			<span><strong>Delete Project</strong></span>
                   		</a>
                   	</td>
                   </tr>
-                </c:forEach>
+                  </c:forEach>
 		</tbody>
 		</table>
 		<br>

@@ -260,6 +260,10 @@ margin:0px;
 function showDiv() {
 	   document.getElementById('site_content').style.display = "block";
 	}
+	
+function hideDiv() {
+	   document.getElementById('site_content').style.display = "none";
+	}
 </script>
 </head>
 <body>
@@ -268,20 +272,21 @@ function showDiv() {
       <div id="logo">
         <div id="logo_text">
           <!-- class="logo_colour", allows you to change the colour of the text -->
-          <h1><a href="index.html">CCS3<span class="logo_colour">_abstract</span></a></h1>
-          <h2>Simple. Contemporary. Website Template.</h2>
+          <img src="<%=request.getContextPath()%>/static/img/gridpoint_logo_1_0.gif" alt="GridPoint" />
+          <h1><a href="index.html">Project<span class="logo_colour">Tracking</span></a></h1>
+          <h2>Submetering data collection to customers..</h2>
         </div>
       </div>
       <nav>
         <div id="menu_container">
-          <ul class="sf-menu" id="nav">
-            <li><button id="create-project" class="btn btn-large" onclick="showDiv()">Createnewproject</button></li>
+          <ul id="nav">
+            <li><button id="create-project" class="btn btn-small ui-button  ui-button-text-only" onclick="showDiv()">Createnewproject</button></li>
             </ul>
             </div>
             </nav>
      </header>
 
- <form name='projectrackform' action="createProject" method="post">
+ <form name='projectrackform' action="createProject" method="post" style="height: 650px;">
 	
 		<div style="margin-left: 1262px; font-size: 12px; color: blue;" >
 			<%Tenant tenant = (Tenant)request.getAttribute("tenant");%>
@@ -295,7 +300,8 @@ function showDiv() {
 			</div>
 	  
 	
-	<div id="site_content" style="margin-left: 300px; margin-top: -500px; display: none; border: 3px;" title="Create new Project">
+	<div id="site_content" style="margin-left: 300px; margin-top: -500px; display: none;" title="Create new Project">
+	<div style="border: solid; border-color: gray; border-style:groove;">
 	 <div style="margin-top: 20px;">
 				Name the Project:<input type="text" name="projectname" id="name"
 					class="text ui-widget-content ui-corner-all" required="required" />
@@ -307,46 +313,48 @@ function showDiv() {
 					<c:forEach var="projecttypes" items="${allProjectstypes}">
 						<option value=${projecttypes.projectTypeId}>${projecttypes.projectType}</option>
 					</c:forEach>
-				</select><br> <br> Start Date: <input type="text" id="datepicker"
-					name="start" /> End Date: <input type="text" id="tdatepicker"
-					name="end" /> <br> <br> <br>
-				<table width="30%">
-					<tr>
-						<td align="right" valign="top" width="50%">
+				</select><br> <br>
+				 Start Date: <input type="text" id="datepicker" name="start" /> 
+				 End Date: <input type="text" id="tdatepicker" name="end" /> <br> <br>
+				 <label >Channels(s) <br>
+				  KW channels at site: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; Channel(s)associated with project &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+				 &nbsp; Description(optional) </label>
 						<select id = "channelsnames" name="attributes" property="attributes" multiple="true" size="20"
-							style="width: 280px; height: 150px;"
+							style="width: 220px; height: 120px;
 							onDblClick="moveSelectedOptions(this.form['attributes'],this.form['selectedAttributes'])">
 								<c:forEach var="channel" items="${allChannels}">
 									<option value="${channel.displayName}">${channel.displayName}</option>
 								</c:forEach>
-						</select></td>
-						<td align="center" valign="top" width="50px;"><br>
+						</select>
 						 <input type="button" name="right" value="Add"
-							style="margin-left: 33px; height: 25px; width: 45px; margin-top: -27px;"
+							style="margin-left: 33px; height: 25px; width: 45px; margin-top: -50px;"
 							onclick="moveSelectedOptions(this.form['attributes'],this.form['selectedAttributes'])"><br>
 							<br>
 							 <input type="button" name="left" value="Remove"
-							style="margin-left: 100px; height: 25px; width: 70px; margin-top: -35px;"
+							style="margin-left: 273px; height: 25px; width: 70px; margin-top: -193px;"
 							onclick="moveSelectedOptions(this.form['selectedAttributes'],this.form['attributes'])">
-							<input type="image" name="right" value="Add all channels"
-							style="margin-left: 50px; height: 1px; width: 5px; margin-top: -43px; color: #0088cc; cursor: pointer; order-color: transparent;"
+							<input type="button" name="right" value="Add all channels"
+							style="margin-left: -90px; height: 25px; width: 116px; margin-top: -120px;"
 							onclick="moveAllSelectedOptions(this.form['attributes'],this.form['selectedAttributes'])"><br>
-						<td align="left" valign="top" width="40%">
 						<select 
 							name="selectedAttributes" id="selectedAttributesId"
 							multiple="multiple" size="4" 
-							style="width: 290px; margin-left: 100px; height: 150px;"
+							style="width: 220px; margin-left: 395px; height: 120px; margin-top: -234px;"
 							onDblClick="moveSelectedOptions(this.form['selectedAttributes'],this.form['attributes'])">
-						</select></td>
-					</tr>
-					
-				</table>
-				<input type="hidden" name="channelDisplayNames" value=""
-					id="hiddenFormFieldName" /> <br> <br> <input
-					type="submit" value="save"/> 
-			</div>	
+						</select>
+						<textarea rows="4" cols="50" name="description"  style="margin-top: -166px; margin-left: 10px;">
+						</textarea>
+				<input type="hidden" name="channelDisplayNames" value="" 
+					id="hiddenFormFieldName" /> <br> <br>
+					 <input type="submit" value="save" class="btn btn-medium" style="margin-top: -109px;margin-left: 20px"/>
+			</div>
 			</div>	
 			</form>	
-  </div>			
+			 <input type="button" value="cancle" id="cancel_id" class="btn btn-medium" onclick="hideDiv()" style="margin-top: -157px;margin-left: 99px"/>
+			 </div>	
+  		
 </body>
 </html>

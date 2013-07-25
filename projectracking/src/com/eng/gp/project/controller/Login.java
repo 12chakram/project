@@ -1,9 +1,8 @@
 package com.eng.gp.project.controller;
 
-import java.io.IOException;
-
 import static com.jayway.restassured.RestAssured.given;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -31,7 +31,6 @@ import com.gridpoint.energy.domainmodel.Channel;
 import com.gridpoint.energy.domainmodel.Premises;
 import com.gridpoint.energy.domainmodel.Tenant;
 import com.jayway.restassured.response.Response;
-import org.codehaus.jackson.map.DeserializationConfig.Feature;
 
 /**
  * Servlet implementation class Login
@@ -49,6 +48,7 @@ public class Login extends HttpServlet {
 	String getChannel = "http://localhost:8080/publicApi/services/data/getChannelsByEndpointId";
 	String getTenants = "http://localhost:8080/publicApi/services/projectTracking/getTenants";
 	String getPremises = "http://localhost:8080/publicApi/services/projectTracking/getPremises";
+	String getChannelsByPremisesId = "http://localhost:8080/publicApi/services/projectTracking/getChannelsByPremisesId";
 	
 	private JsonToObject jsonToObject = new JsonToObject();
 	SimpleDateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss z yyyy");
@@ -82,9 +82,9 @@ public class Login extends HttpServlet {
 		
  UserDetails userDetails =  userLogin(userName,password);
  	if(userDetails.getUsername()!=null){
-		Long endpointId = Long.parseLong("50132");
 		
-		List<Channel> channelList  = getChannelsByEndPoint(endpointId);
+		List<Channel> channelList  = getChannelsByEndPoint(Long.parseLong("12349"));
+		
 		Tenant tenant = getTenant();
 		List<Premises>PremisesList = null;
 		if(tenant!=null && tenant.getTenantId()!=null){
@@ -128,18 +128,18 @@ public class Login extends HttpServlet {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private List<Channel> getChannelsByEndPoint(Long endPointId){
+	private List<Channel> getChannelsByEndPoint(Long premisesId){
+		
+		List<Channel> channelList =null;
 		
 		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
-		Response restChannelResponse = given().cookies(loginCookie).queryParam("username", userName).queryParam("password", password).queryParam("endpointId",endPointId).post(getChannel);
+		Response restChannelResponse = given().cookies(loginCookie).queryParam("username", userName).queryParam("password", password).queryParam("premisesId",premisesId).get(getChannelsByPremisesId);
 		String channelResponse = restChannelResponse.asString();
 		
 		System.out.println(channelResponse);
 		
 		//Channel channel = (Channel) jsonToObject.getStringToObject(channelResponse, "result", Channel.class);
 		//System.out.println(channel.toString());
-		
-		List<Channel> channelList =null;
 		
 		try {
 			JSONObject jsonObject = new JSONObject(channelResponse);
@@ -157,9 +157,8 @@ public class Login extends HttpServlet {
 
 					JSONObject channelObject = jsonArray.getJSONObject(iCount); 
 					Channel channel =(Channel) objectMapper.readValue(channelObject.toString(), Channel.class);
-					// String withoutspace = channel.getDisplayName().replaceAll("\\s", "");
-					//channel.setDisplayName(withoutspace);
-					channelList.add(channel);
+					 channelList.add(channel);
+					
 				}
 
 			}
@@ -167,11 +166,10 @@ public class Login extends HttpServlet {
 			ex.printStackTrace();
 			
 		}
-		
-		
 		return channelList;
 		
-	}
+		}
+	
 	
 	@SuppressWarnings("unchecked")
 	private Tenant getTenant(){

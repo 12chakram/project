@@ -23,6 +23,7 @@ public class ProjectTrackingItem implements Serializable {
 	private String siteName;
 	private Map<String, ProjectTrackingErrorWarning> errorsAndWarnings;
 	private List<Channel> channels;
+	private String description;
 
 	public Long getProjectId() {
 		return projectId;
@@ -127,6 +128,14 @@ public class ProjectTrackingItem implements Serializable {
 	
 	public void setChannels(List<Channel> channels) {
 		this.channels = channels;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	@Override

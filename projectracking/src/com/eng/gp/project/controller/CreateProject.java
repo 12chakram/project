@@ -23,20 +23,15 @@ import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-
-
 import com.eng.gp.project.util.DateFormats;
-import com.eng.gp.project.util.JsonToObject;
 import com.google.gson.Gson;
 import com.google.gson.JsonParseException;
 import com.gridpoint.energy.domainmodel.ProjectTrackingItem;
 import com.gridpoint.energy.domainmodel.ProjectTrackingItemForCreate;
-import com.gridpoint.energy.publicapi.util.JacksonProjectTrackingItemDeserializer;
 import com.jayway.restassured.response.Response;
 
 /**
@@ -51,7 +46,6 @@ public class CreateProject extends HttpServlet {
 	private static final String getProjectsByPremises = "http://localhost:8080/publicApi/services/projectTracking/getProjectsByPremisesId";
 	
 	HttpSession session = null;
-	private JsonToObject jsonToObject = new JsonToObject();
 	ObjectMapper objectMapper = new ObjectMapper();
 	
 	String projectName;
@@ -60,6 +54,7 @@ public class CreateProject extends HttpServlet {
 	String premisesId;
 	String sDate;
 	String eDate;
+	String description;
 	
 	StringBuffer sb;
    
@@ -81,6 +76,7 @@ public class CreateProject extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
+	@SuppressWarnings("deprecation")
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		
 		try{
@@ -96,7 +92,7 @@ public class CreateProject extends HttpServlet {
 			//sdate = sdate.replace("/", "-");
 			  // String edate = request.getParameter("end").replace("/", "-");;
 			//edate = edate.replace("/", "-");
-			
+			 description = request.getParameter("description");
 			
 			String str_date_time = null;
 			String end_date_time = null;
@@ -150,6 +146,7 @@ public class CreateProject extends HttpServlet {
 			project.setStartDate(str_date_time);
 			project.setEndDate(end_date_time);
 			project.setChannelDisplayNames(channelDisplayName);
+			project.setDescription(description);
 			
 			Gson gson = new Gson();
 			String json = gson.toJson(project);
@@ -174,6 +171,7 @@ public class CreateProject extends HttpServlet {
 
 	}
 	
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	private ProjectTrackingItem createProject(String jsonProjectString) throws JsonMappingException, JsonParseException, JSONException, IOException{
 		 
 		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");
@@ -191,6 +189,7 @@ public class CreateProject extends HttpServlet {
 		return createdProject;
 	}
 	
+	@SuppressWarnings("deprecation")
 	private ProjectTrackingItem getProjectFromJSon(String jsonResponse) throws JSONException, JsonParseException, 
 	JsonMappingException, IOException{
 		ProjectTrackingItem project = null;
@@ -207,7 +206,7 @@ public class CreateProject extends HttpServlet {
 		return project;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "deprecation" })
 	private List<ProjectTrackingItem> getProjectsByPremisesId(Long premisesId){
 		
 		Map<String, String> loginCookie = (Map<String, String>) session.getAttribute("loginCookies");

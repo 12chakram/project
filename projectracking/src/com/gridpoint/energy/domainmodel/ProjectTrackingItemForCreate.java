@@ -19,6 +19,7 @@ public class ProjectTrackingItemForCreate implements Serializable {
 	private Long projectTypeId;
 	private String projectType;
 	private Set<String> channelDisplayNames;
+	private String description;
 
 	public Long getProjectId() {
 		return projectId;
@@ -115,6 +116,14 @@ public class ProjectTrackingItemForCreate implements Serializable {
 
 	public void setChannelDisplayNames(Set<String> channelDisplayNames) {
 		this.channelDisplayNames = channelDisplayNames;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 }

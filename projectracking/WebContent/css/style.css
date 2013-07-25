@@ -144,7 +144,7 @@ ol li {
 
 header { 
   background: #444 url(../images/logo.jpg) no-repeat;
-  height: 200px;
+  height: 150px;
 }
 
 #logo { 
@@ -163,6 +163,8 @@ header {
   background: transparent url(../images/menubar.png);
   left: 0;
   padding: 10px 20px 20px 20px;
+  margin-top: -16px;
+  height: 91px;
 }
 
 #logo h1, #logo h2 { 
@@ -193,7 +195,7 @@ header {
 }
 
 nav { 
-  height: 44px;
+  height: 26px;
   margin: -44px auto 0 auto;
   color: #fef4e9;
   background: transparent url(../images/menubar.png);
@@ -202,6 +204,7 @@ nav {
 #menu_container { 
   width: 1000px;
   margin: 0 auto 0 auto;
+  margin-top: -75px;
 }
 
 #site_content { 
